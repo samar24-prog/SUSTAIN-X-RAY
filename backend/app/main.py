@@ -14,7 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
 from pydantic import ValidationError
 from .models import Bill, Reading, Ticket, Verification, Settings, Registry, UserRole
-from .store import Store, FirestoreStore
+from .store import default_store
 from .auth import identity, authorize
 from .analytics import bill_metrics, water_analysis, alerts_for, verify, score
 from .integrations import UnconfiguredAdapter
@@ -49,11 +49,7 @@ def stamped(row, user, id=None):
 def create_app(store=None):
     mode = os.getenv("APP_MODE", "production")
     if store is None:
-        store = (
-            Store(os.getenv("LOCAL_DB_PATH", str(ROOT / "data/local.sqlite")))
-            if mode == "local"
-            else FirestoreStore()
-        )
+        store = default_store(ROOT)
     simulator = Simulator()
 
     @asynccontextmanager
@@ -71,9 +67,12 @@ def create_app(store=None):
     app.state.store = store
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=os.getenv(
-            "CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173"
-        ).split(","),
+        allow_origins=[
+            o.strip().rstrip("/")
+            for o in os.getenv(
+                "CORS_ORIGINS", "http://127.0.0.1:5173,http://localhost:5173"
+            ).split(",")
+        ],
         allow_credentials=False,
         allow_methods=["GET", "POST", "PUT"],
         allow_headers=["Authorization", "Content-Type"],
@@ -149,13 +148,15 @@ def create_app(store=None):
         except sqlite3.IntegrityError:
             raise HTTPException(409, "Duplicate record; transaction rolled back")
         except Exception as e:
-            if type(e).__name__ == "AlreadyExists":
+            if type(e).__name__ == "UniqueViolation":
                 raise HTTPException(409, "Duplicate record; transaction rolled back")
             raise
         return rows
 
     @app.get("/api/simulator")
     def simulator_status(user=Depends(reader)):
+        # Serverless hosts pause the background loop between requests; catch up on poll.
+        simulator.tick()
         return simulator.snapshot()
 
     @app.post("/api/simulator/start")
@@ -184,7 +185,7 @@ def create_app(store=None):
         return {
             "status": "ok",
             "mode": mode,
-            "storage": "sqlite-local" if mode == "local" else "firestore",
+            "storage": store.kind,
             "hardware": UnconfiguredAdapter().health(),
         }
 

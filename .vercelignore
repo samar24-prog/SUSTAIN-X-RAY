@@ -1,0 +1,6 @@
+.env*
+!.env.example
+.venv
+frontend/node_modules
+frontend/dist
+backend/tests

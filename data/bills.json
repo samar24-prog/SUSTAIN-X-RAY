@@ -1,0 +1,53 @@
+[
+  {
+    "account": "2000040038",
+    "invoice": "805000537000",
+    "meter_id": "UPP69564",
+    "period_start": "2026-05-31",
+    "period_end": "2026-06-30",
+    "kwh": 2375883.48,
+    "kvah": 2394127.15,
+    "total_inr": 22210232,
+    "demand_kva": 7950,
+    "energy_rate": 8.12,
+    "energy_rate_unit": "INR/kVAh",
+    "demand_charges_inr": 3136438.36,
+    "source": "imported",
+    "source_ref": "NPCL electricity bill JUN-2026, original page 1, invoice 805000537000 (see docs/SOURCE_REVIEW.md)",
+    "quality_flags": []
+  },
+  {
+    "account": "2000040038",
+    "invoice": "804000514503",
+    "meter_id": "UPP69564",
+    "period_start": "2026-06-30",
+    "period_end": "2026-07-31",
+    "kwh": 3008147.23,
+    "kvah": 3040236.77,
+    "total_inr": 29253532,
+    "demand_kva": 8922,
+    "energy_rate": 8.12,
+    "energy_rate_unit": "INR/kVAh",
+    "demand_charges_inr": 3637242.74,
+    "source": "imported",
+    "source_ref": "NPCL electricity bill JUL-2026, original page 1, invoice 804000514503 (see docs/SOURCE_REVIEW.md)",
+    "quality_flags": []
+  },
+  {
+    "account": "2000040038",
+    "invoice": "807000582570",
+    "meter_id": "UPP69564",
+    "period_start": "2026-07-31",
+    "period_end": "2026-08-31",
+    "kwh": 3101811.4,
+    "kvah": 3135321.59,
+    "total_inr": 30545123,
+    "demand_kva": 8622,
+    "energy_rate": 8.12,
+    "energy_rate_unit": "INR/kVAh",
+    "demand_charges_inr": 3514941.37,
+    "source": "imported",
+    "source_ref": "NPCL electricity bill AUG-2026, original page 1, invoice 807000582570 (see docs/SOURCE_REVIEW.md)",
+    "quality_flags": []
+  }
+]

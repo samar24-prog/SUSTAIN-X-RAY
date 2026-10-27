@@ -9,3 +9,6 @@ __pycache__/
 .venv/
 tmp/
 *.tsbuildinfo
+.vercel/
+.vercel
+.env*

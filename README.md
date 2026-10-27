@@ -1,6 +1,6 @@
 # Sustain-X-Ray
 
-A runnable campus sustainability MVP: React + TypeScript + Vite, Tailwind, Radix accessible dialogs, Recharts, FastAPI, Firebase Authentication and a Firestore repository. Explicit SQLite local mode lets you evaluate without credentials. The initial dataset contains three source-backed university NPCL bills, **no fabricated water data or verified savings**.
+A runnable campus sustainability MVP: React + TypeScript + Vite, Tailwind, Radix accessible dialogs, Recharts, FastAPI, Supabase Authentication and a Supabase PostgreSQL repository. Explicit SQLite local mode lets you evaluate without credentials. The initial dataset contains three source-backed university NPCL bills, **no fabricated water data or verified savings**.
 
 ## Run locally
 
@@ -34,7 +34,7 @@ npm --prefix frontend run lint
 npm --prefix frontend run build
 ```
 
-For optional Firestore rule emulator tests see `tests/firestore/README.md`. Tests use isolated temporary SQLite databases and do not alter the working dataset.
+Set `TEST_DATABASE_URL` to a disposable PostgreSQL database to also run the PostgreSQL adapter tests. Tests use isolated temporary SQLite databases and do not alter the working dataset.
 
 ## Working features
 
@@ -44,18 +44,18 @@ Historical bills use original reading dates. **August correction:** active energ
 
 ## Requires external configuration or validation
 
-Firebase project, first admin profile, deployed rule tests, backend credentials and Vercel/backend hosting; hardware commissioning and source-specific adapters; RO unit/interval/channel confirmation; separate Block 1/3 consumption evidence; contextual baselines and cost assumptions. No real-time data, cloud deployment or actual savings are claimed. No automated PDF OCR importer: supplied electricity figures were reviewed against originals; ongoing imports use validated CSV/manual entry.
+Supabase project, first admin profile, database credentials and Vercel/backend hosting; hardware commissioning and source-specific adapters; RO unit/interval/channel confirmation; separate Block 1/3 consumption evidence; contextual baselines and cost assumptions. No real-time data, cloud deployment or actual savings are claimed. No automated PDF OCR importer: supplied electricity figures were reviewed against originals; ongoing imports use validated CSV/manual entry.
 
-See `docs/FIREBASE_AND_DEPLOYMENT.md`, `docs/SCHEMA.md`, `docs/HARDWARE.md`, `docs/IMPLEMENTATION_PLAN.md` and `docs/VALIDATION.md` for exact configuration, calculation rules and tested limits. `.env.example` files contain placeholders only; export backend variables or use your hosting environment (the backend does not automatically load `.env`).
+See `docs/SUPABASE_AND_DEPLOYMENT.md`, `docs/SCHEMA.md`, `docs/HARDWARE.md`, `docs/IMPLEMENTATION_PLAN.md` and `docs/VALIDATION.md` for exact configuration, calculation rules and tested limits. `.env.example` files contain placeholders only; export backend variables or use your hosting environment (the backend does not automatically load `.env`).
 
 ## Structure
 
-- `frontend/`: application, styles, Firebase client, templates, Vercel configuration.
-- `backend/app/`: models, analytics, repository adapters, API, authorization, hardware contract, seed utility.
+- `frontend/`: application, styles, Supabase Auth client, templates, frontend-only Vercel configuration.
+- `api/index.py`, `vercel.json`, `requirements.txt`: single-project Vercel deployment (static frontend + Python API).
+- `backend/app/`: models, analytics, repository adapters and PostgreSQL schema (`schema.sql`), API, authorization, hardware contract, seed utility.
 - `backend/tests/`: calculation, validation, workflow, import and authorization tests.
 - `data/`: source-backed bill JSON and source hashes; local database ignored.
 - `docs/`: evidence review, schema, deployment, hardware, validation.
-- `firestore.rules`: deny direct client writes; backend enforces write permissions.
 
 ## MVP boundaries
 

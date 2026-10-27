@@ -1,12 +1,12 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { createClient } from '@supabase/supabase-js';
 const env = import.meta.env;
-export const auth = env.VITE_FIREBASE_API_KEY ? getAuth(initializeApp({ apiKey: env.VITE_FIREBASE_API_KEY, authDomain: env.VITE_FIREBASE_AUTH_DOMAIN, projectId: env.VITE_FIREBASE_PROJECT_ID })) : null;
-export const login = (email: string, password: string) => { if (!auth)
-    throw Error('Firebase is not configured'); return signInWithEmailAndPassword(auth, email, password); };
-export const logout = () => auth && signOut(auth);
+export const supabase = env.VITE_SUPABASE_URL && env.VITE_SUPABASE_ANON_KEY ? createClient(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY) : null;
+export const login = async (email: string, password: string) => { if (!supabase)
+    throw Error('Supabase is not configured'); const { error } = await supabase.auth.signInWithPassword({ email, password }); if (error)
+    throw error; };
+export const logout = () => supabase?.auth.signOut();
 export async function request(path: string, method = 'GET', body?: unknown, raw = false) {
-    const token = await auth?.currentUser?.getIdToken();
+    const token = (await supabase?.auth.getSession())?.data.session?.access_token;
     const response = await fetch(`${env.VITE_API_URL || ''}/api${path}`, { method, headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}), ...(body !== undefined ? { 'Content-Type': raw ? 'text/plain' : 'application/json' } : {}) }, body: body === undefined ? undefined : raw ? String(body) : JSON.stringify(body) });
     if (!response.ok) {
         let message;

@@ -2,7 +2,9 @@
 
 Collections: `users`, `buildings`, `meters`, `readings`, `bills`, `alerts`, `maintenanceTickets`, `actionVerifications`, `sustainabilitySnapshots`, `settings`. Records have `id`, `created_at`, `updated_at`, `created_by` where created by APIs. Dates are ISO strings; timestamps have timezone offsets (UTC for normalized reading storage). Currency INR; no inferred unit conversions beyond m³ to litres for water balances.
 
-- users: Firebase UID as ID, name, role (viewer/operator/admin), active.
+In PostgreSQL each collection is a table defined in `backend/app/schema.sql`; `maintenanceTickets`, `actionVerifications` and `sustainabilitySnapshots` become `maintenance_tickets`, `action_verifications` and `sustainability_snapshots`. Dates and timestamps are typed columns (returned to the API as ISO strings, timestamps in UTC); lists and nested records such as `quality_flags`, `history` and `evidence_snapshot` are `jsonb`.
+
+- users: Supabase Auth user ID as ID, name, role (viewer/operator/admin), active.
 - buildings/meters: evidence-backed ID, name, resource, location, source_ref, connectivity (unverified/manual/csv), notes. No physical meter is invented by registry seed.
 - bills: account, invoice, meter_id, previous/current reading dates, kwh, optional kvah, total_inr, optional demand_kva/demand_charges_inr, energy_rate and explicit rate unit, source, source_ref, quality_flags. ID hash of account+invoice; duplicates rejected. Original bill values immutable via this API.
 - readings: meter_id (or documented logbook channel), category (RO input/product/reject, blocks 1–3, electricity), unit, interval/cumulative kind, value, start/end, source, source_ref, quality_flags. ID hash of meter/category/kind/normalized end timestamp. Interval start is required; cumulative deltas are computed within matching meter/category/unit/demo partition. Negative deltas flag resets, not negative consumption. Quality-flagged values excluded from balance calculations.

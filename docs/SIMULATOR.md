@@ -17,7 +17,7 @@ No generated values are written to bills, readings, alerts or verification colle
 The UI shows current settings, timestamps, paused/streaming/stale status and connection errors. Sample age exceeding 3 × sampling interval is stale. Viewer role may observe; operators/admins may start, pause and clear. Clearing only discards ephemeral synthetic frames. Export demo CSV to retain/import a snapshot explicitly; source=demo remains set and duplicate import rules still apply. Exported imports are not required for the live view.
 
 ## API
-- GET /api/simulator — authenticated snapshot (does not generate data).
+- GET /api/simulator — authenticated snapshot; also generates a frame if one is due, so polling keeps the stream going on serverless hosts.
 - POST /api/simulator/start — operator/admin; JSON {"scenario":"normal","interval_seconds":3,"baseline_kw":120,"input_lpm":60,"seed":42}.
 - POST /api/simulator/pause — stop generation, preserve buffer.
 - POST /api/simulator/reset — clear buffer while paused.

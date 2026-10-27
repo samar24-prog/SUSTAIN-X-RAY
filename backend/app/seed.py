@@ -1,16 +1,11 @@
 """Explicit one-time historical seed for either storage backend."""
 
 import json
-import os
 from .main import ROOT, stable_id, stamped
 from .models import Bill
-from .store import Store, FirestoreStore
+from .store import default_store
 
-store = (
-    Store(os.getenv("LOCAL_DB_PATH", str(ROOT / "data/local.sqlite")))
-    if os.getenv("APP_MODE") == "local"
-    else FirestoreStore()
-)
+store = default_store(ROOT)
 rows = []
 for b in json.loads((ROOT / "data/bills.json").read_text()):
     r = Bill(**b).model_dump(mode="json")
